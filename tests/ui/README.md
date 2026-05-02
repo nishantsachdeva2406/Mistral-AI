@@ -31,7 +31,6 @@ ui/
 ├── .env                    # Environment variables (gitignored)
 ├── playwright.config.ts    # Playwright configuration
 └── package.json            # Scripts and dependencies
-
 ---
 
 ## Prerequisites
