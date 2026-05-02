@@ -1,0 +1,635 @@
+{
+  "info": {
+    "_postman_id": "59fa223f-4f05-4d46-92b3-ce1d83d73660",
+    "name": "Chat Completions API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54471414",
+    "_collection_link": "https://go.postman.co/collection/54471414-59fa223f-4f05-4d46-92b3-ce1d83d73660?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Happy Path",
+      "item": [
+        {
+          "name": "Valid completion - basic prompt",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// TC-API-01: Status code is 200",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// TC-API-02: Response has id",
+                  "pm.test(\"Response has id\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property(\"id\");",
+                  "    pm.expect(json.id).to.be.a(\"string\").and.not.empty;",
+                  "});",
+                  "",
+                  "// TC-API-03: Response object type is chat.completion",
+                  "pm.test(\"Object type is chat.completion\", function () {",
+                  "    pm.expect(pm.response.json().object).to.equal(\"chat.completion\");",
+                  "});",
+                  "",
+                  "// TC-API-04: Response has choices array",
+                  "pm.test(\"Choices array is present and not empty\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.choices).to.be.an(\"array\").that.is.not.empty;",
+                  "});",
+                  "",
+                  "// TC-API-05: First choice has message content",
+                  "pm.test(\"First choice has message content\", function () {",
+                  "    const content = pm.response.json().choices[0].message.content;",
+                  "    pm.expect(content).to.be.a(\"string\").and.not.empty;",
+                  "});",
+                  "",
+                  "// TC-API-06: Response contains word Paris",
+                  "pm.test(\"Response contains word Paris\", function () {",
+                  "    const content = pm.response.json().choices[0].message.content;",
+                  "    pm.expect(content).to.include(\"Paris\");",
+                  "});",
+                  "",
+                  "// TC-API-07: Usage object is present",
+                  "pm.test(\"Usage object has token counts\", function () {",
+                  "    const usage = pm.response.json().usage;",
+                  "    pm.expect(usage).to.have.property(\"prompt_tokens\");",
+                  "    pm.expect(usage).to.have.property(\"completion_tokens\");",
+                  "    pm.expect(usage).to.have.property(\"total_tokens\");",
+                  "});",
+                  "",
+                  "// TC-API-08: Response time under 30 seconds",
+                  "pm.test(\"Response time is under 30 seconds\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(30000);",
+                  "});",
+                  "",
+                  "// TC-API-09: finish_reason is stop",
+                  "pm.test(\"finish_reason is stop\", function () {",
+                  "    const finish = pm.response.json().choices[0].finish_reason;",
+                  "    pm.expect(finish).to.equal(\"stop\");",
+                  "});",
+                  "",
+                  "// TC-API-10: Model in response matches requested model",
+                  "pm.test(\"Model in response matches requested model\", function () {",
+                  "    pm.expect(pm.response.json().model).to.equal(\"mistral-small-latest\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"{{model}}\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"What is the capital of France? Answer in one sentence.\"\n    }\n  ]\n  ,\n  \"max_tokens\": 100\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/chat/completions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Valid completion — max_tokens respected",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"completion_tokens is at most 5\", function () {",
+                  "    const usage = pm.response.json().usage;",
+                  "    pm.expect(usage.completion_tokens).to.be.at.most(5);",
+                  "});",
+                  "",
+                  "pm.test(\"finish_reason is length\", function () {",
+                  "    const finish = pm.response.json().choices[0].finish_reason;",
+                  "    pm.expect(finish).to.equal(\"length\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"{{model}}\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Tell me a very long story about space exploration.\"\n    }\n  ],\n  \"max_tokens\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/chat/completions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Negative Tests",
+      "item": [
+        {
+          "name": "Missing API key",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Error detail is present\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property(\"detail\");",
+                  "    pm.expect(json.detail).to.equal(\"Unauthorized\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"{{model}}\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Hello\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/chat/completions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid API key",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Error detail is present\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property(\"detail\");",
+                  "    pm.expect(json.detail).to.equal(\"Unauthorized\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "invalid_key_123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"{{model}}\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Hello\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/chat/completions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Missing model field",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message is present\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property(\"message\");",
+                  "    pm.expect(json.message).to.equal(\"Missing model parameter.\");",
+                  "});",
+                  "",
+                  "pm.test(\"Error type is invalid_model\", function () {",
+                  "    pm.expect(pm.response.json().type).to.equal(\"invalid_model\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Hello\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/chat/completions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Missing messages field",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 422\", function () {",
+                  "    pm.response.to.have.status(422);",
+                  "});",
+                  "",
+                  "pm.test(\"Error detail is present\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property(\"detail\");",
+                  "    pm.expect(json.detail).to.be.an(\"array\").that.is.not.empty;",
+                  "});",
+                  "",
+                  "pm.test(\"Error message mentions missing field\", function () {",
+                  "    const detail = pm.response.json().detail[0];",
+                  "    pm.expect(detail).to.have.property(\"msg\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"{{model}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/chat/completions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid model name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message is present\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property(\"message\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"invalid-model-xyz\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Hello\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/chat/completions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Edge Cases",
+      "item": [
+        {
+          "name": "Empty string message",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message is clear\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property(\"message\");",
+                  "    pm.expect(json.message).to.equal(\"No messages contain any content\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"{{model}}\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/chat/completions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Very long prompt",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is not empty\", function () {",
+                  "    const content = pm.response.json().choices[0].message.content;",
+                  "    pm.expect(content).to.be.a(\"string\").and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test(\"Response time is under 30 seconds\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(30000);",
+                  "});",
+                  "",
+                  "// Log response time for summary doc",
+                  "console.log(\"Long prompt response time:\", pm.response.responseTime + \"ms\");",
+                  "console.log(\"Prompt tokens:\", pm.response.json().usage.prompt_tokens);",
+                  "console.log(\"Completion tokens:\", pm.response.json().usage.completion_tokens);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"{{model}}\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\"\n    }\n  ],\n  \"max_tokens\": 100\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/chat/completions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "max_tokens = 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"completion_tokens is 1\", function () {",
+                  "    pm.expect(pm.response.json().usage.completion_tokens).to.equal(1);",
+                  "});",
+                  "",
+                  "pm.test(\"finish_reason is length\", function () {",
+                  "    const finish = pm.response.json().choices[0].finish_reason;",
+                  "    pm.expect(finish).to.equal(\"length\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"{{model}}\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"What is 2 + 2?\"\n    }\n  ],\n  \"max_tokens\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/chat/completions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{api_key}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
