@@ -214,4 +214,10 @@ This framework follows a 4-layer architecture:
 - `loginPage` fixture → always fresh browser, no session (for login tests)
 - `chatPage` and future fixtures → session auto-created and reused
 
+## Test Results
+
+All 7 tests passing:
+
+![Test Report](docs/TestReport.png)
+
 ---
