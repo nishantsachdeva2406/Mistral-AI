@@ -15,22 +15,24 @@ Automated end-to-end tests for [Le Chat] built with Playwright and TypeScript.
 
 ## Project Structure
 
+```
 ui/
-├── e2e/                    # Test files
-│   ├── login.spec.ts       # Login test scenarios
-│   └── chat.spec.ts        # Chat completion test scenarios
-├── fixtures/
-│   └── base.ts             # Shared fixtures — session management
-├── pages/                  # Page Object Models
-│   ├── LoginPage.ts        # Login page locators and actions
-│   └── ChatPage.ts         # Chat page locators and actions
-├── reports/                # HTML test reports
-│   └── screenshots/        # Failure screenshots
-├── .auth/                  # Saved session (gitignored)
-├── paths.ts                # Application URL paths
-├── .env                    # Environment variables (gitignored)
-├── playwright.config.ts    # Playwright configuration
-└── package.json            # Scripts and dependencies
+  e2e/
+    login.spec.ts         # Login test scenarios
+    chat.spec.ts          # Chat completion test scenarios
+  fixtures/
+    base.ts               # Shared fixtures — session management
+  pages/
+    LoginPage.ts          # Login page locators and actions
+    ChatPage.ts           # Chat page locators and actions
+  reports/
+    screenshots/          # Failure screenshots
+  .auth/                  # Saved session (gitignored)
+  paths.ts                # Application URL paths
+  .env                    # Environment variables (gitignored)
+  playwright.config.ts    # Playwright configuration
+  package.json            # Scripts and dependencies
+```
 ---
 
 ## Prerequisites
