@@ -198,12 +198,6 @@ test.describe('Settings', () => {
 });
 ```
 
-### Step 5 — Add script to package.json (optional)
-
-```json
-"test:settings": "npx playwright test e2e/settings.spec.ts --headed"
-```
-
 ---
 
 ## Architecture
