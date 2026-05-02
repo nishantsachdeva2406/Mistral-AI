@@ -1,0 +1,24 @@
+{
+  "name": "tests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+  "test": "npx playwright test --headed",
+  "test:headless": "npx playwright test",
+  "test:file": "npx playwright test",
+  "test:grep": "npx playwright test --headed --grep",
+  "report": "npx playwright show-report reports"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@types/node": "^25.6.0"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2"
+  }
+}

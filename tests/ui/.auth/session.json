@@ -1,0 +1,129 @@
+{
+  "cookies": [
+    {
+      "name": "csrftoken",
+      "value": "nsc3hlQD4z1viqTmfmF51dYDsLyU4om1",
+      "domain": "chat.mistral.ai",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "anonymousUser",
+      "value": "537298e9-9e4c-44fa-af64-d79713d9b0c2",
+      "domain": "chat.mistral.ai",
+      "path": "/",
+      "expires": 1809246809.407258,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__cf_bm",
+      "value": "0ROgct1vDd6Kie9GHxadWXV2A7ruvcdCaUmBn8owe6M-1777710809.344613-1.0.1.1-Vi3cMNJI.3eVOvurt4mbeb9hseN7JmC4daVhpBWHB2DAFGSZi3_dOBLxDrplLfco2msCJDsr.JKF.jYd9BZeRhsqE0huim0.HoYRwXiug.2Iqu.eaRnocMj02jWro07Y",
+      "domain": ".mistral.ai",
+      "path": "/",
+      "expires": 1777712609.407296,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_cfuvid",
+      "value": "hQ1KTo1ca.tsgHJILzv8B6QZKZjqJ6u13NJmG0bm.Tw-1777710809.491523-1.0.1.1-B9QrHLSjPMlDcizt1rCLEeZBMQILi.hHj8qobIf2qLg",
+      "domain": ".mistral.ai",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "intercom-id-xel0jpx9",
+      "value": "af006736-94a1-4efc-9db5-4b33ab2882ef",
+      "domain": ".mistral.ai",
+      "path": "/",
+      "expires": 1801040811,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "intercom-session-xel0jpx9",
+      "value": "",
+      "domain": ".mistral.ai",
+      "path": "/",
+      "expires": 1778315611,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "intercom-device-id-xel0jpx9",
+      "value": "5a6d559b-425a-407b-a6a8-c252305391b9",
+      "domain": ".mistral.ai",
+      "path": "/",
+      "expires": 1801040811,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__cflb",
+      "value": "04dTofjtHwhfCny3TibYMM4LURzprwab36oTguJcVH",
+      "domain": "auth.mistral.ai",
+      "path": "/",
+      "expires": 1777714411.845798,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "csrf_token_1d61ec8f0158ec4868343239ec73dbe1bfebad9908ad860e62f470c767573d0d",
+      "value": "okxA+6oL0vXX6gfkZHZBeg9mU7Nl532YHHpuJKlf2Lc=",
+      "domain": ".mistral.ai",
+      "path": "/",
+      "expires": 1809246814.594942,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__cf_bm",
+      "value": "bCEoMZAIA.LXqpWEK5.QFvbi2LPoqsESySrW4_aIfAg-1777710813.827985-1.0.1.1-Ixc2WzpZAp1zUuUDo2ApALjkIacvfXcSdcYNRB6YMBmQXy4oeBp3jln91bFV6CwA3DWZ6rBcvm4GMvmXZoLYDdmeWNvaiXUGRAjRsze.CaYfC83oevQLEkOvulnNGIH9",
+      "domain": ".auth.mistral.ai",
+      "path": "/",
+      "expires": 1777712614.595195,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "ory_session_coolcurranf83m3srkfl",
+      "value": "\"MTc3NzcxMDgxNHx0LWI0R3dRYmthLVBLTXZpV2FtUnFYZXFZcG5BVUIyQ3lzV0JiWWJadS0zbW9FSUxjT1FZTlo3Vjh2ZVRQcmtuWGRwSE11bDdzYUxieDJzMERtU2o5MGJZUEI1TTQtbE5KYWZVRjVlN3RtNndzNndFV3FVMW4wR3FfZ3Z2b3BQSVBzNHFkMkUtZGM2M01uV3AwV1dRTlc5OGRKRS1pcm1VVE5BUXI2c01CV255c01hNXp0b05fT1NMRmp3VlR5Qm9pcXp3TDJVY3RHTGNncmpDYWxFX1BTOFdINl84cHg0UlRyeVFIMXdUUWFFOGZmbTM2bVgyM25qTTBHVWhaQXJ0WHFLU1kyTDJfMXdHNjNkeUVNNHF81WIHoRvOFpkptR_9I_yP-q-Vq6inz9Pwu4ccEBFvRIk=\"",
+      "domain": ".mistral.ai",
+      "path": "/",
+      "expires": 1785486814.063715,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://chat.mistral.ai",
+      "localStorage": [
+        {
+          "name": "persistent-store",
+          "value": "{\"state\":{\"isLoaded\":true,\"newChatFeatures\":null,\"selectedIntegrations\":[],\"newChatLibraries\":null,\"draftMessageByChatId\":{},\"dismissedItems\":{\"dismiss-key-example\":{\"dismissed\":false,\"dismissDuration\":null,\"dismissedAt\":null},\"code-beta-notification\":{\"dismissed\":false,\"dismissDuration\":null,\"dismissedAt\":null}},\"projectsConfiguration\":{}},\"version\":0}"
+        },
+        {
+          "name": "intercom.intercom-state",
+          "value": "{\"app\":{\"openConfig\":{\"unifiedStyling\":true,\"openTo\":\"home\",\"spaces\":[{\"type\":\"home\",\"label\":\"Home\",\"navigationLabel\":\"Home\",\"badge\":null},{\"type\":\"messages\",\"label\":\"Messages\",\"navigationLabel\":\"Messages\",\"badge\":null},{\"type\":\"tickets\",\"label\":\"Tickets\",\"navigationLabel\":\"Tickets\",\"badge\":null},{\"type\":\"help\",\"label\":\"Help\",\"navigationLabel\":\"Help\",\"badge\":null}],\"userHasReceivedChecklists\":false,\"userHasLiveNewsfeed\":false,\"userHasTickets\":false},\"selfServeSuggestionsMatch\":false,\"name\":\"mistral.ai\",\"features\":{\"anonymousInboundMessages\":true,\"googleAnalytics\":false,\"hubspotInstalled\":false,\"inboundMessages\":true,\"marketoEnrichmentInstalled\":false,\"googleAnalytics4Integration\":true},\"helpCenterSiteUrl\":\"https://help.mistral.ai\",\"inboundConversationsDisabled\":true,\"isDeveloperWorkspace\":false,\"customGoogleAnalyticsTrackerId\":null},\"launcher\":{\"isLauncherEnabled\":true},\"launcherDiscoveryMode\":{\"hasDiscoveredLauncher\":false},\"launcherSettings\":{\"alignment\":\"right\",\"color\":\"#FA500F\",\"colorDark\":\"#ffffff\",\"hasRequiredFeatures\":true,\"horizontalPadding\":20,\"instantBootEnabled\":true,\"launcherLogoUrl\":\"https://downloads.intercomcdn.eu/i/o/xel0jpx9/18919/abd5ee11c9b65b375c17fd1c12c5/c86c787901124419bae1b511bda2f471.png\",\"launcherLogoDarkUrl\":null,\"messengerLayout\":\"widget\",\"secondaryColor\":\"#131313\",\"secondaryColorDark\":\"#ffffff\",\"showLauncher\":true,\"themeMode\":\"light\",\"updatedAt\":1777626030,\"verticalPadding\":20,\"isLoading\":false},\"user\":{\"id\":\"69f5b6db2384713ed45d8ede\",\"role\":\"visitor\",\"locale\":\"en\",\"hasConversations\":false},\"message\":{},\"conversations\":{\"byId\":{}},\"openOnBoot\":{\"type\":null,\"metadata\":{},\"lastOpenAtTimestamp\":1777710811660},\"operator\":{\"lastComposerEvent\":0},\"router\":{\"isInitialized\":false,\"navigationQueue\":[]}}"
+        }
+      ]
+    }
+  ]
+}
