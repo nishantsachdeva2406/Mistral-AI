@@ -108,7 +108,6 @@ assertions:        113 executed, 1 known finding
 duration:          18s 434ms
 avg response time: 684ms
 
-![API Report](docs/TestReportAPI.png)
-
+![API Report](docs/TestReport.png)
 
 ---
