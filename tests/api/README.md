@@ -12,8 +12,9 @@ Automated API tests for the Mistral `/v1/chat/completions` endpoint built with P
 
 ---
 
-## Project Structure
+## Project Structure  
 
+```
 api/
 ├── Chat Completions API.postman_collection.json    # Postman collection
 ├── PRD.postman_environment.example.json            # Environment template (safe to commit)
@@ -22,6 +23,7 @@ api/
 │   └── api-report.html                             # Generated after running tests
 └── README.md
 
+```
 ---
 
 ## Prerequisites
