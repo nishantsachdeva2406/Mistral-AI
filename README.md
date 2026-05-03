@@ -5,10 +5,12 @@ Test automation suite for the Mistral API and Le Chat.
 ---
 
 ## Structure
+```
 mistral-ai/
 └── tests/
-├── api/    # Postman + Newman API tests
-└── ui/     # Playwright + TypeScript UI tests
+    ├── api/    # Postman + Newman API tests
+    └── ui/     # Playwright + TypeScript UI tests
+```
 
 ---
 
