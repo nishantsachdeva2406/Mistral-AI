@@ -1,6 +1,6 @@
 # Mistral AI — API Test Automation
 
-Automated API tests for the Mistral `/v1/chat/completions` endpoint built with Postman and Newman.
+Automated API tests for the Mistral `/v1/chat/completions` endpoint built with Postman and Newman. No SDK used.
 
 ---
 
@@ -14,15 +14,13 @@ Automated API tests for the Mistral `/v1/chat/completions` endpoint built with P
 
 ## Project Structure
 
-```
 api/
-  Chat Completions API.postman_collection.json    # Postman collection
-  PRD.postman_environment.example.json            # Environment template (safe to commit)
-  PRD.postman_environment.json                    # Your environment with API key (gitignored)
-  reports/
-    api-report.html                               # Generated HTML report
-  README.md
-```
+├── Chat Completions API.postman_collection.json    # Postman collection
+├── PRD.postman_environment.example.json            # Environment template (safe to commit)
+├── PRD.postman_environment.json                    # Your environment with API key (gitignored)
+├── reports/
+│   └── api-report.html                             # Generated after running tests
+└── README.md
 
 ---
 
@@ -62,6 +60,7 @@ Get your API key from [console.mistral.ai](https://console.mistral.ai) → API K
 
 ## Running Tests
 
+### Run full collection
 ```bash
 newman run "Chat Completions API.postman_collection.json" \
   -e "PRD.postman_environment.json" \
@@ -69,44 +68,47 @@ newman run "Chat Completions API.postman_collection.json" \
   --reporter-htmlextra-export reports/api-report.html
 ```
 
+### Run a specific folder only
+```bash
+newman run "Chat Completions API.postman_collection.json" \
+  -e "PRD.postman_environment.json" \
+  --folder "Happy Path" \
+  --reporters cli,htmlextra \
+  --reporter-htmlextra-export reports/api-report.html
+```
+
+### Run without generating a report
+```bash
+newman run "Chat Completions API.postman_collection.json" \
+  -e "PRD.postman_environment.json"
+```
+
 ---
 
-## Test Cases
+## Generating the Report
 
-### 01 - Happy Path
+After running any command above, open the report in your browser:
 
-| Request | What is tested |
-|---------|---------------|
-| Valid completion — basic prompt | Status 200, response structure, model behaviour, token usage, response time |
-| Valid completion — max_tokens respected | Response truncated at max_tokens, finish_reason is length |
+```bash
+open reports/api-report.html        # Mac
+start reports/api-report.html       # Windows
+```
 
-### 02 - Negative Tests
-
-| Request | Expected Status | What is tested |
-|---------|----------------|---------------|
-| Missing API key | 401 | Unauthenticated request rejected |
-| Invalid API key | 401 | Invalid credentials rejected |
-| Missing model field | 400 | Required field validation |
-| Missing messages field | 422 | Required field validation |
-| Invalid model name | 400 | Unknown model rejected |
-
-### 03 - Edge Cases
-
-| Request | What is tested |
-|---------|---------------|
-| Empty string message | Empty content rejected with clear error |
-| Very long prompt | Performance with large input |
-| max_tokens = 1 | Single token output behaviour |
+The report includes:
+- Total tests run, passed and failed
+- Per-request breakdown with request and response details
+- Response time per request
+- Console logs captured during the run
 
 ---
 
 ## Test Results
+requests:          28 executed, 0 failed
+assertions:        113 executed, 1 known finding
+duration:          18s 434ms
+avg response time: 684ms
 
-```
-requests:          10 executed, 0 failed
-assertions:        33 executed, 0 failed
-duration:          3.2s
-avg response time: 286ms
-```
 ![API Report](docs/TestReportAPI.png)
+
+
 ---
