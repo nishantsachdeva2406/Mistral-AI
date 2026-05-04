@@ -1,6 +1,6 @@
 # Mistral AI — API Test Automation
 
-Automated API tests for the Mistral `/v1/chat/completions` endpoint built with Postman and Newman. No SDK used.
+Automated API tests for the Mistral `/v1/chat/completions` endpoint built with Postman and Newman.
 
 ---
 
@@ -16,11 +16,14 @@ Automated API tests for the Mistral `/v1/chat/completions` endpoint built with P
 
 ```
 api/
+├── docs/
+│   └── TestReport.png                              # Latest test run screenshot
+├── reports/
+│   └── api-report.html                             # Generated after running tests
 ├── Chat Completions API.postman_collection.json    # Postman collection
 ├── PRD.postman_environment.example.json            # Environment template (safe to commit)
 ├── PRD.postman_environment.json                    # Your environment with API key (gitignored)
-├── reports/
-│   └── api-report.html                             # Generated after running tests
+├── package.json
 └── README.md
 
 ```
@@ -28,26 +31,43 @@ api/
 
 ## Prerequisites
 
-- Node.js v20+
-- Newman installed globally
+- Node.js v20+ — [Download here](https://nodejs.org)
+- npm v10+ — comes with Node.js automatically
+
+To verify your installation:
+
+```bash
+node --version
+npm --version
+```
 
 ---
 
 ## Installation
 
+1. Navigate to the api folder
+
 ```bash
-sudo npm install -g newman newman-reporter-htmlextra
+cd tests/api
+```
+
+2. Install Newman
+
+```bash
+npm install -g newman newman-reporter-htmlextra
 ```
 
 ---
 
 ## Environment Setup
 
+3. Create your environment file
+
 ```bash
 cp PRD.postman_environment.example.json PRD.postman_environment.json
 ```
 
-Open `PRD.postman_environment.json` and add your API key:
+4. Open `PRD.postman_environment.json` and add your API key:
 
 ```json
 {
@@ -104,11 +124,30 @@ The report includes:
 
 ---
 
+## Test Coverage
+
+| Folder | What is tested |
+|--------|---------------|
+| Happy Path | Valid requests, response structure, token usage |
+| Negative Tests | Auth failures, missing fields, invalid model |
+| Edge Cases | Empty string, long prompt, max_tokens = 1 |
+| Chat Messages & Roles | System, user and assistant role behaviour |
+| Multi-Turn Conversation | Context retention across turns |
+| Prefix Flag | Forced response prefix, structural requirement |
+| Stop Sequence | Single token, array of tokens |
+| Safe Prompt | Moderation behaviour with and without flag |
+| Model Behavior | JSON mode, determinism, temperature limits, streaming, n completions |
+
+---
+
 ## Test Results
-requests:          28 executed, 0 failed
-assertions:        113 executed, 1 known finding
-duration:          18s 434ms
-avg response time: 684ms
+
+```
+requests:          32 executed, 0 failed
+assertions:        131 executed, 0 failed
+duration:          20s 615ms
+avg response time: 647ms
+```
 
 ![API Report](docs/TestReport.png)
 

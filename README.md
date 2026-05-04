@@ -4,6 +4,17 @@ Test automation suite for the Mistral API and Le Chat.
 
 ---
 
+## Getting Started
+
+```bash
+git clone https://github.com/nishantsachdeva2406/Mistral-AI.git
+cd Mistral-AI
+```
+
+Then follow the setup instructions for each suite below.
+
+---
+
 ## Structure
 ```
 mistral-ai/

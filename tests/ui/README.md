@@ -18,27 +18,38 @@ Automated end-to-end tests for [Le Chat] built with Playwright and TypeScript.
 ```
 ui/
   e2e/
-    login.spec.ts         # Login test scenarios
     chat.spec.ts          # Chat completion test scenarios
+    login.spec.ts         # Login test scenarios
   fixtures/
     base.ts               # Shared fixtures — session management
   pages/
-    LoginPage.ts          # Login page locators and actions
     ChatPage.ts           # Chat page locators and actions
+    LoginPage.ts          # Login page locators and actions
   reports/
-    screenshots/          # Failure screenshots
+    index.html            # Generated HTML report
+  test-results/           # Playwright test artifacts
+  docs/                   # Screenshots and assets
   .auth/                  # Saved session (gitignored)
-  paths.ts                # Application URL paths
   .env                    # Environment variables (gitignored)
+  .gitignore
+  paths.ts                # Application URL paths
   playwright.config.ts    # Playwright configuration
+  tsconfig.json           # TypeScript configuration
   package.json            # Scripts and dependencies
 ```
 ---
 
 ## Prerequisites
 
-- Node.js v20+
-- npm v10+
+- Node.js v20+ — [Download here](https://nodejs.org)
+- npm v10+ — comes with Node.js automatically
+
+To verify your installation:
+
+```bash
+node --version
+npm --version
+```
 
 ---
 

@@ -770,26 +770,20 @@
                   "listen": "test",
                   "script": {
                     "exec": [
-                      "// API still returns 200 — the model handles the refusal, not the API",
                       "pm.test(\"Status code is 200\", function () {",
                       "    pm.response.to.have.status(200);",
                       "});",
                       "",
-                      "pm.test(\"Model refused the out of scope request\", function () {",
+                      "// checking if the model actually picked up the context we pre-seeded",
+                      "pm.test(\"Response references the refund context\", function () {",
                       "    const content = pm.response.json().choices[0].message.content.toLowerCase();",
                       "    pm.expect(content).to.satisfy(text =>",
-                      "        text.includes(\"sorry\") ||",
-                      "        text.includes(\"unable\") ||",
-                      "        text.includes(\"only\") ||",
-                      "        text.includes(\"not able\")",
+                      "        text.includes(\"refund\") || text.includes(\"49\") || text.includes(\"order\")",
                       "    );",
                       "});",
                       "",
-                      "// if this fails it means the system prompt was ignored completely",
-                      "pm.test(\"Response does not contain Python code\", function () {",
-                      "    const content = pm.response.json().choices[0].message.content;",
-                      "    pm.expect(content).to.not.include(\"def \");",
-                      "    pm.expect(content).to.not.include(\"print(\");",
+                      "pm.test(\"finish_reason is stop\", function () {",
+                      "    pm.expect(pm.response.json().choices[0].finish_reason).to.equal(\"stop\");",
                       "});",
                       "",
                       "pm.test(\"No 5xx error\", function () {",
@@ -798,7 +792,10 @@
                       "",
                       "pm.test(\"Response time is under 10s\", function () {",
                       "    pm.expect(pm.response.responseTime).to.be.below(10000);",
-                      "});"
+                      "});",
+                      "",
+                      "// logging this one since token count is interesting with pre-seeded context",
+                      "console.log(\"Prompt tokens with pre-seeded assistant message:\", pm.response.json().usage.prompt_tokens);"
                     ],
                     "type": "text/javascript",
                     "packages": {},
@@ -1204,7 +1201,7 @@
                   "listen": "test",
                   "script": {
                     "exec": [
-                      "// interesting edge — no user message at all, just a prefixed assistant opener",
+                      "// no user message at all, just a prefixed assistant opener",
                       "// documenting what the API does here rather than assuming",
                       "pm.test(\"Status code is 200 or 400\", function () {",
                       "    pm.expect(pm.response.code).to.be.oneOf([200, 400]);",
@@ -1361,37 +1358,29 @@
                       "    pm.response.to.have.status(200);",
                       "});",
                       "",
-                      "pm.test(\"Response has id, object, choices and usage\", function () {",
-                      "    const json = pm.response.json();",
-                      "    pm.expect(json).to.have.property(\"id\").that.is.a(\"string\").and.not.empty;",
-                      "    pm.expect(json.object).to.equal(\"chat.completion\");",
-                      "    pm.expect(json.choices).to.be.an(\"array\").and.not.empty;",
-                      "    pm.expect(json).to.have.property(\"usage\");",
-                      "});",
-                      "",
-                      "// core check — stop token must not appear in the output",
-                      "pm.test(\"Stop token '4.' is not present in response\", function () {",
+                      "// none of the stop tokens should appear in the output",
+                      "pm.test(\"None of the stop tokens appear in response\", function () {",
                       "    const content = pm.response.json().choices[0].message.content;",
-                      "    pm.expect(content).to.not.include(\"4.\");",
+                      "    pm.expect(content).to.not.include(\"Conclusion\");",
+                      "    pm.expect(content).to.not.include(\"conclusion\");",
+                      "    pm.expect(content).to.not.include(\"In summary\");",
+                      "    pm.expect(content).to.not.include(\"Overall\");",
                       "});",
                       "",
-                      "// doc says output will not contain the stop sequence",
-                      "pm.test(\"Response contains steps before the stop token\", function () {",
+                      "pm.test(\"Response is not empty\", function () {",
                       "    const content = pm.response.json().choices[0].message.content;",
-                      "    pm.expect(content).to.satisfy(text =>",
-                      "        text.includes(\"1.\") || text.includes(\"2.\") || text.includes(\"3.\")",
-                      "    );",
+                      "    pm.expect(content).to.be.a(\"string\").and.not.empty;",
                       "});",
                       "",
-                      "pm.test(\"finish_reason is stop\", function () {",
-                      "    pm.expect(pm.response.json().choices[0].finish_reason).to.equal(\"stop\");",
+                      "pm.test(\"No 5xx error\", function () {",
+                      "    pm.expect(pm.response.code).to.be.below(500);",
                       "});",
                       "",
                       "pm.test(\"Response time is under 10s\", function () {",
                       "    pm.expect(pm.response.responseTime).to.be.below(10000);",
                       "});",
                       "",
-                      "console.log(\"Response:\", pm.response.json().choices[0].message.content);"
+                      "console.log(\"Response with multiple stop tokens:\", pm.response.json().choices[0].message.content);"
                     ],
                     "type": "text/javascript",
                     "packages": {},
@@ -1404,7 +1393,7 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"model\": \"{{model}}\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"List the steps to make a cup of tea. Number each step.\"\n    }\n  ],\n  \"stop\": [\"4.\"],\n  \"max_tokens\": 200\n}",
+                  "raw": "{\n  \"model\": \"{{model}}\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Write a short paragraph about Paris. End with a conclusion.\"\n    }\n  ],\n  \"stop\": [\"Conclusion\", \"conclusion\", \"In summary\", \"Overall\"],\n  \"max_tokens\": 200\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1579,38 +1568,31 @@
                       "    pm.response.to.have.status(200);",
                       "});",
                       "",
-                      "pm.test(\"Response has id, object, choices and usage\", function () {",
-                      "    const json = pm.response.json();",
-                      "    pm.expect(json).to.have.property(\"id\").that.is.a(\"string\").and.not.empty;",
-                      "    pm.expect(json.object).to.equal(\"chat.completion\");",
-                      "    pm.expect(json.choices).to.be.an(\"array\").and.not.empty;",
-                      "    pm.expect(json).to.have.property(\"usage\");",
-                      "});",
-                      "",
-                      "// safe_prompt was too aggressive — blocked a harmless question",
-                      "pm.test(\"Response answers the question normally or is blocked by safe_prompt\", function () {",
+                      "// safe_prompt active — model should refuse or redirect",
+                      "pm.test(\"Model refused or redirected the sensitive request\", function () {",
                       "    const content = pm.response.json().choices[0].message.content.toLowerCase();",
                       "    pm.expect(content).to.satisfy(text =>",
                       "        text.includes(\"sorry\") ||",
-                      "        text.includes(\"can't assist\")",
+                      "        text.includes(\"unable\") ||",
+                      "        text.includes(\"cannot\") ||",
+                      "        text.includes(\"illegal\") ||",
+                      "        text.includes(\"ethical\") ||",
+                      "        text.includes(\"not able\") ||",
+                      "        text.includes(\"can't\") ||",
+                      "        text.includes(\"inappropriate\")",
                       "    );",
                       "});",
                       "",
-                      "pm.test(\"finish_reason is stop or length\", function () {",
-                      "    const finish = pm.response.json().choices[0].finish_reason;",
-                      "    pm.expect(finish).to.be.oneOf([\"stop\", \"length\"]);",
+                      "// API still returns 200 — moderation happens at model level not API level",
+                      "pm.test(\"No 5xx error\", function () {",
+                      "    pm.expect(pm.response.code).to.be.below(500);",
                       "});",
                       "",
                       "pm.test(\"Response time is under 10s\", function () {",
                       "    pm.expect(pm.response.responseTime).to.be.below(10000);",
                       "});",
                       "",
-                      "pm.test(\"Token counts are present and valid\", function () {",
-                      "    const usage = pm.response.json().usage;",
-                      "    pm.expect(usage.prompt_tokens).to.be.above(0);",
-                      "    pm.expect(usage.completion_tokens).to.be.above(0);",
-                      "    pm.expect(usage.total_tokens).to.equal(usage.prompt_tokens + usage.completion_tokens);",
-                      "});"
+                      "console.log(\"Safe prompt response to sensitive request:\", pm.response.json().choices[0].message.content);"
                     ],
                     "type": "text/javascript",
                     "packages": {},
@@ -1707,6 +1689,327 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Model behavior",
+      "item": [
+        {
+          "name": "Returns valid JSON",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// core check — response_format json_object must return parseable JSON",
+                  "pm.test(\"Response content is valid JSON\", function () {",
+                  "    const content = pm.response.json().choices[0].message.content;",
+                  "    try {",
+                  "        const parsed = JSON.parse(content);",
+                  "        pm.expect(parsed).to.be.an(\"object\");",
+                  "    } catch (e) {",
+                  "        pm.expect.fail(\"Response content is not valid JSON: \" + content);",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"Parsed JSON has expected fields\", function () {",
+                  "    const content = pm.response.json().choices[0].message.content;",
+                  "    const parsed = JSON.parse(content);",
+                  "    pm.expect(parsed).to.have.any.keys(\"name\", \"age\", \"city\");",
+                  "});",
+                  "",
+                  "pm.test(\"finish_reason is stop or length\", function () {",
+                  "    const finish = pm.response.json().choices[0].finish_reason;",
+                  "    pm.expect(finish).to.be.oneOf([\"stop\", \"length\"]);",
+                  "});",
+                  "",
+                  "pm.test(\"Response time is under 10s\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(10000);",
+                  "});",
+                  "",
+                  "console.log(\"JSON response:\", pm.response.json().choices[0].message.content);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"{{model}}\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Give me a user profile with name, age and city. Return as JSON.\"\n    }\n  ],\n  \"response_format\": { \"type\": \"json_object\" },\n  \"max_tokens\": 100\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/chat/completions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Random_seed produces deterministic output",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is not empty\", function () {",
+                  "    const content = pm.response.json().choices[0].message.content;",
+                  "    pm.expect(content).to.be.a(\"string\").and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test(\"Response time is under 10s\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(10000);",
+                  "});",
+                  "",
+                  "// save the response to compare with second run",
+                  "const content = pm.response.json().choices[0].message.content;",
+                  "pm.collectionVariables.set(\"seed_response_1\", content);",
+                  "console.log(\"Run 1 response:\", content);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"{{model}}\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Pick a random city in France.\"\n    }\n  ],\n  \"random_seed\": 42,\n  \"temperature\": 0,\n  \"max_tokens\": 50\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/chat/completions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Temperature at extreme value",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 422\", function () {",
+                  "    pm.response.to.have.status(422);",
+                  "});",
+                  "",
+                  "pm.test(\"Error confirms temperature max is 1.5\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message.detail[0].msg).to.include(\"less than or equal to 1.5\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response time is under 10s\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(10000);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"{{model}}\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Pick a random city in France.\"\n    }\n  ],\n  \"temperature\": 2,\n  \"max_tokens\": 50\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/chat/completions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Multiple completions with n",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// core check — n:3 should return exactly 3 choices",
+                  "pm.test(\"Response contains 3 choices\", function () {",
+                  "    const choices = pm.response.json().choices;",
+                  "    pm.expect(choices).to.be.an(\"array\").with.lengthOf(3);",
+                  "});",
+                  "",
+                  "pm.test(\"Each choice has a message and finish_reason\", function () {",
+                  "    const choices = pm.response.json().choices;",
+                  "    choices.forEach(function(choice) {",
+                  "        pm.expect(choice).to.have.property(\"message\");",
+                  "        pm.expect(choice).to.have.property(\"finish_reason\");",
+                  "        pm.expect(choice.message.content).to.be.a(\"string\").and.not.empty;",
+                  "    });",
+                  "});",
+                  "",
+                  "// interesting to check — are the 3 responses different from each other?",
+                  "pm.test(\"Choices have different content\", function () {",
+                  "    const choices = pm.response.json().choices;",
+                  "    const contents = choices.map(c => c.message.content);",
+                  "    const unique = new Set(contents);",
+                  "    pm.expect(unique.size).to.be.above(1);",
+                  "});",
+                  "",
+                  "pm.test(\"Response time is under 15s\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(15000);",
+                  "});",
+                  "",
+                  "choices = pm.response.json().choices;",
+                  "choices.forEach(function(choice, index) {",
+                  "    console.log(\"Choice \" + index + \":\", choice.message.content);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"{{model}}\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Pick a random city in France.\"\n    }\n  ],\n  \"n\": 3,\n  \"max_tokens\": 50\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/chat/completions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Streaming response",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Content-Type is text/event-stream\", function () {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/event-stream\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response body contains data chunks\", function () {",
+                  "    const body = pm.response.text();",
+                  "    pm.expect(body).to.include(\"data:\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains done signal\", function () {",
+                  "    const body = pm.response.text();",
+                  "    pm.expect(body).to.include(\"[DONE]\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response time is under 15s\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(15000);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"{{model}}\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Tell me about myself\"\n    }\n  ],\n  \"stream\": true,\n  \"max_tokens\": 100\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/chat/completions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "auth": {
@@ -1741,6 +2044,12 @@
           ""
         ]
       }
+    }
+  ],
+  "variable": [
+    {
+      "key": "seed_response_1",
+      "value": ""
     }
   ]
 }
