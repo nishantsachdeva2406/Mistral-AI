@@ -19,12 +19,13 @@ Then follow the setup instructions for each suite below.
 ---
 
 ## Structure
+
+```
 mistral-ai/
 └── tests/
-├── api/    # Postman + Newman API tests
-└── ui/     # Playwright + TypeScript UI tests
-
----
+    ├── api/    # Postman + Newman API tests
+    └── ui/     # Playwright + TypeScript UI tests
+```
 
 ## Test Suites
 
