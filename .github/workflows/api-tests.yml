@@ -1,0 +1,36 @@
+name: API Tests (Newman/Postman)
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  api-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install Newman
+        run: npm install -g newman newman-reporter-htmlextra
+        
+      - name: Run API Tests
+        run: |
+          newman run "tests/api/Chat Completions API.postman_collection.json" \
+            --environment tests/api/PRD.postman_environment.example.json \
+            --reporters cli,htmlextra \
+            --reporter-htmlextra-export tests/api/reports/api-report.html
+            
+      - name: Upload API test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-test-report
+          path: tests/api/reports/
+          retention-days: 30
